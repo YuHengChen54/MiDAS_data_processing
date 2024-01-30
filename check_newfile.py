@@ -4,7 +4,7 @@ import os
 import shutil
 import pandas as pd
 
-num = 1000
+num = 1
 filename = os.listdir('/home/yuheng5454/MiDAS_test/data/event_cut_waveform_1257')
 
 not_ok_list = []

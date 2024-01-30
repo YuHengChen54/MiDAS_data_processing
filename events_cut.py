@@ -4,7 +4,6 @@ import subprocess
 from datetime import datetime, timedelta
 from tqdm import tqdm
 
-
 catalog = pd.read_csv("/home/yuheng5454/MiDAS_test/events_230311-231024_allML.csv")
 
 ################################ DAS ################################
@@ -22,8 +21,19 @@ for i in tqdm(range(catalog.shape[0])):
     total_seconds = time_difference.total_seconds()
     das_file = f'/home/yuheng5454/MiDAS_test/data/MiDAS-A_1257/{date[0:4]}{date[5:7]}{date[8:10]}/mseed-dt100/TW.01257..HSF.D.2023.{day_of_year}.sac'
     
+    s = f'r {das_file} \n'
+    s += 'lh kztime \n'
+    s += 'q \n'
+    process = subprocess.Popen(['sac'], stdin=subprocess.PIPE, stdout=subprocess.PIPE).communicate(s.encode())
+    output, error = process
+    output = output.decode()
+    if output.split('.')[-1][0:3] == '\n':
+        kztime = 0
+    else:
+        kztime = int(output.split('.')[-1][0:3])/1000
+
     #調用SAC
-    s = f'cut {total_seconds} {total_seconds+120} \n'
+    s = f'cut {total_seconds-kztime} {total_seconds-kztime+120} \n'
     s += f'r {das_file} \n'
     s += f'ch b 0 \n'
     s += f"TITLE ML={ML} Location Bottom Size Large \n"
