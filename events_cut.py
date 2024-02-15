@@ -90,4 +90,3 @@ for i in tqdm(range(catalog.shape[0])):
 #         s += f'w /home/yuheng5454/MiDAS_test/data/seis_event_cut_waveform_GL{i}/new_GL{i}_{date}_{time}.sac \n'
 #         s += 'q \n'
 #         subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())
-
