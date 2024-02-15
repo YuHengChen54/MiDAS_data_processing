@@ -14,7 +14,7 @@ for i in ['GLZ', 'GL1', 'GL2']:
         subprocess.Popen(['sac'], stdin=subprocess.PIPE).communicate(s.encode())        
 
 
-##刪掉合併錯的檔案(全部)
+# #刪掉合併錯的檔案(全部)
 # for i in ['GLZ', 'GL1', 'GL2']:
 #     for j in tqdm(filepath):
 #         try:
