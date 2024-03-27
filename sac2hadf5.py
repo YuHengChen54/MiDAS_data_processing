@@ -9,10 +9,10 @@ class read_sac():
         self.data = self.sac[0].data
         self.time = self.sac[0].times()
 
-    def data():
+    def data(self):
         return self.data
     
-    def time():
+    def time(self):
         return self.time
 
 class save_hdf5():
@@ -52,4 +52,13 @@ for fold, save_fold in zip(fold_list, save_fold_list):
 # import matplotlib.pyplot as plt
 # fig, ax = plt.subplots(figsize=(20, 5), dpi=500)
 # ax.plot(f['waveform_time'][:], f['waveform_data'][:])
+# fig.show()
+
+
+# wave = load_dataset('/home/yuheng5454/MiDAS_test/data/hdf5/GLZ', ['new_GLZ_2023-06-11_02:20:58.27.hdf5'])
+# waveform, label = wave[0]
+
+# import matplotlib.pyplot as plt
+# fig, ax = plt.subplots(figsize=(20, 5), dpi=500)
+# ax.plot(waveform['waveform_time'][:], waveform['waveform_data'][:], linewidth=0.1, color='black')
 # fig.show()
