@@ -55,7 +55,7 @@ class load_dataset(Dataset):
 class Down(nn.Module):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
-        super().__init__()
+        super(Down, self).__init__()
         self.downblock = nn.Sequential(
             nn.Conv1d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding), 
             nn.BatchNorm1d(out_channels), 
@@ -68,7 +68,7 @@ class Down(nn.Module):
 class Up(nn.Module):
     
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding, r):
-        super().__init__()
+        super(Up, self).__init__()
 
         self.sub_pixel = PixelShuffle1D(r)
 
@@ -92,58 +92,90 @@ class Up(nn.Module):
 
 class OutConv(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super().__init__()
+        super(OutConv, self).__init__()
         self.conv = nn.Conv1d(in_channels=in_channels, out_channels=out_channels, kernel_size=1)
 
     def forward(self, x):
         return self.conv(x)
-
-##################################### 測試區 ###########################################
-
-file_name = os.listdir('/home/yuheng5454/MiDAS_test/data/hdf5/DAS')
-fold = '/home/yuheng5454/MiDAS_test/data/hdf5/DAS'
-a= load_dataset(fold, file_name)
-train_dataload = DataLoader(a, batch_size=32, shuffle=True)
-
-b, c = next(iter(train_dataload))
-
-
-
-
-class UNet(nn.Module):
-    def __init__(self, n_channels, n_classes):
-        super().__init__()
-        self.n_channels = n_channels
-        self.n_classes = n_classes
-
-        self.down1 = Down(n_channels, 32, 5, 1, 0) #len=11997
-        self.down2 = Down(32, 64, 5, 2, 0) #len=5997
-
-        self.up1 = Up(64, 16, 5, 1, 0, 2) 
-        self.outc = OutConv(16, n_classes)
+    
+class CBLR(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
+        super(CBLR, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv1d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding), 
+            nn.BatchNorm1d(out_channels), 
+            nn.LeakyReLU(inplace=True)
+        )
 
     def forward(self, x):
-        x1 = self.down1(x)
-        x2 = self.down2(x1)
-        x = self.up1(x2, x1)
-        final = self.outc(x)
+        return self.conv(x)
+##################################### 測試區 ###########################################
 
-        return final
+# file_name = os.listdir('/home/yuheng5454/MiDAS_test/data/hdf5/DAS')
+# fold = '/home/yuheng5454/MiDAS_test/data/hdf5/DAS'
+# a= load_dataset(fold, file_name)
+# train_dataload = DataLoader(a, batch_size=32, shuffle=True)
 
-net = UNet(n_channels=1, n_classes=1)
-b = b.unsqueeze(1)
-b.size()
-
-pred = net(b)
-pred[0].size()
-test = np.array(pred[1].detach())
+# b, c = next(iter(train_dataload))
 
 
-import matplotlib.pyplot as plt
 
-for i in range(20):
-    test = np.array(pred[i].detach())
-    fig, ax = plt.subplots(figsize=(20, 10), dpi=500, nrows=2)
-    ax[0].plot(np.arange(0,11993), test[0], linewidth=0.2, color='black')
-    ax[1].plot(np.arange(0,12001), b[i][0], linewidth=0.2, color='black')
-    fig.show()
+
+# class UNet(nn.Module):
+#     def __init__(self, n_channels, n_classes):
+#         super().__init__()
+#         self.n_channels = n_channels
+#         self.n_classes = n_classes
+
+#         self.down1 = Down(n_channels, 32, 5, 1, 0) #len=11997
+#         self.down2 = Down(32, 64, 5, 2, 0) #len=5997
+
+#         self.up1 = Up(64, 16, 5, 1, 0, 2) 
+#         self.outc = OutConv(16, n_classes)
+
+#     def forward(self, x):
+#         x1 = self.down1(x)
+#         x2 = self.down2(x1)
+#         x = self.up1(x2, x1)
+#         final = self.outc(x)
+
+#         return final
+
+# net = UNet(n_channels=1, n_classes=1)
+# b = b.unsqueeze(1)
+# b.size()
+
+# pred = net(b)
+# pred[0].size()
+# test = np.array(pred[1].detach())
+
+# import matplotlib.pyplot as plt
+
+# for i in range(20):
+#     test = np.array(pred[i].detach())
+#     fig, ax = plt.subplots(figsize=(20, 10), dpi=500, nrows=2)
+#     ax[0].plot(np.arange(0,11993), test[0], linewidth=0.2, color='black')
+#     ax[1].plot(np.arange(0,12001), b[i][0], linewidth=0.2, color='black')
+#     fig.show()
+
+# class Discriminator(nn.Module):
+#     def __init__(self, n_channels):
+#         super(Discriminator, self).__init__()
+#         self.conv = nn.Sequential(
+#             CBLR(n_channels, 64, 9, 2, 0), 
+#             CBLR(64, 64, 9, 2, 0), 
+#             CBLR(64, 64, 9, 2, 0), 
+#             CBLR(64, 64, 9, 2, 0), 
+#             CBLR(64, 64, 9, 2, 0), 
+#             CBLR(64, 64, 9, 2, 0), 
+#             CBLR(64, 1, 180, 1, 0), 
+#             nn.Sigmoid()
+#         )
+
+#     def forward(self, x):
+#         output = self.conv(x)
+#         return output
+
+# test = Discriminator(1)
+# pred = test(b)
+# pred
