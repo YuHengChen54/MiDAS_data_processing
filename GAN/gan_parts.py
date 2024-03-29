@@ -51,7 +51,6 @@ class load_dataset(Dataset):
 
         return waveform, label
 
-
 class Down(nn.Module):
 
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
@@ -168,6 +167,7 @@ class CBLR(nn.Module):
 #             CBLR(64, 64, 9, 2, 0), 
 #             CBLR(64, 64, 9, 2, 0), 
 #             CBLR(64, 64, 9, 2, 0), 
+
 #             CBLR(64, 1, 180, 1, 0), 
 #             nn.Sigmoid()
 #         )
