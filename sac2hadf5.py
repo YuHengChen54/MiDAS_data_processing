@@ -1,6 +1,7 @@
 import h5py
 from obspy import read
 import os
+from tqdm import tqdm
 
 class read_sac():
 
@@ -23,10 +24,10 @@ class save_hdf5():
         self.d2 = self.hdf5.create_dataset('waveform_time', data=time)
         self.hdf5.close()
 
-fold_list = ['/home/yuheng5454/MiDAS_test/data/event_cut_waveform_1257', 
-            '/home/yuheng5454/MiDAS_test/data/seis_event_cut_waveform_GL1', 
-            '/home/yuheng5454/MiDAS_test/data/seis_event_cut_waveform_GL2', 
-            '/home/yuheng5454/MiDAS_test/data/seis_event_cut_waveform_GLZ'
+fold_list = ['/home/yuheng5454/MiDAS_test/data/checked/1257', 
+            '/home/yuheng5454/MiDAS_test/data/checked/GL1', 
+            '/home/yuheng5454/MiDAS_test/data/checked/GL2', 
+            '/home/yuheng5454/MiDAS_test/data/checked/GLZ'
             ]
 save_fold_list = ['/home/yuheng5454/MiDAS_test/data/hdf5/DAS',
                 '/home/yuheng5454/MiDAS_test/data/hdf5/GL1', 
@@ -36,7 +37,7 @@ save_fold_list = ['/home/yuheng5454/MiDAS_test/data/hdf5/DAS',
 #寫for把所有DAS+井下地震儀改存hdf5
 for fold, save_fold in zip(fold_list, save_fold_list):
     file_list = os.listdir(fold)
-    for file in file_list:
+    for file in tqdm(file_list):
         # print(fold+'/'+file)
         readsac = read_sac(fold+'/'+file)
         data = readsac.data
@@ -62,3 +63,13 @@ for fold, save_fold in zip(fold_list, save_fold_list):
 # fig, ax = plt.subplots(figsize=(20, 5), dpi=500)
 # ax.plot(waveform['waveform_time'][:], waveform['waveform_data'][:], linewidth=0.1, color='black')
 # fig.show()
+        
+
+####################### Remove file #######################
+# for i in tqdm(save_fold_list):
+#     file_list = os.listdir(i)
+#     for j in tqdm(file_list):
+#         try:
+#             os.remove(f'{i}/{j}')
+#         except:
+#             continue
