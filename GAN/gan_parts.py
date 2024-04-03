@@ -79,12 +79,12 @@ class Up(nn.Module):
 
     def forward(self, x1, x2):
         print("x1first shape:", x1.shape)
-        x1 = self.sub_pixel(x1)
+        # x1 = self.sub_pixel(x1)
         # input is CL
         diff = torch.tensor([x2.size()[2] - x1.size()[2]])
         x1 = nn.functional.pad(x1, (diff // 2, diff - diff // 2))
-        print("x2 shape:", x2.shape)
-        print("x1 shape:", x1.shape)
+        # print("x2 shape:", x2.shape)
+        # print("x1 shape:", x1.shape)
         x = torch.cat([x2, x1], dim=1)
 
         return self.upblock(x)
