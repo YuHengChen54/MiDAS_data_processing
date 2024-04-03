@@ -65,6 +65,17 @@ train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_wo
 #         else:
 #             os.remove(f'{fold}/{file[0:4]}{comp}{file[7:]}')
 
+def show_images(generator, epoch):
+    fig, ax = plt.subplots(figsize = (20, 25), dpi=400, nrows=5)
+    ax[0].plot(range(0, 11993), generator[1][0].detach().numpy(), linewidth=0.1, color='black')
+    ax[1].plot(range(0, 11993), generator[10][0].detach().numpy(), linewidth=0.1, color='black')
+    ax[2].plot(range(0, 11993), generator[13][0].detach().numpy(), linewidth=0.1, color='black')
+    ax[3].plot(range(0, 11993), generator[18][0].detach().numpy(), linewidth=0.1, color='black')
+    ax[4].plot(range(0, 11993), generator[20][0].detach().numpy(), linewidth=0.1, color='black')
+    ax[0].set_title(f'Generator_epoch_{epoch}', fontsize=20)
+    fig.show()
+
+
 adversarial_loss = nn.BCELoss().to(device)
 G.train()
 D.train()
@@ -115,8 +126,19 @@ for epoch in range(epochs):
     total_loss_g/=len(train_loader)
     total_loss_d/=len(train_loader)
 
+
+    if epoch % 1 == 0:
+        show_images(fake_inputs, epoch)
+
     print('[Epoch: {}/{}] D_loss: {:.3f} G_loss: {:.3f}'.format(epoch, epochs, total_loss_d.item(), total_loss_g.item()))
 
 
 print('Training Finished.')
 print('Cost Time: {}s'.format(time.time()-start_time))
+
+
+
+# import matplotlib.pyplot as plt
+# fig, ax = plt.subplots(figsize=(20, 5), dpi=500)
+# ax.plot(range(0, 11993), fake_inputs[0][0].detach().numpy(), linewidth=0.1, color='black')
+# fig.show()

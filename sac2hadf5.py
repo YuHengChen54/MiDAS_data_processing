@@ -37,13 +37,56 @@ save_fold_list = ['/home/yuheng5454/MiDAS_test/data/hdf5/DAS',
 #寫for把所有DAS+井下地震儀改存hdf5
 for fold, save_fold in zip(fold_list, save_fold_list):
     file_list = os.listdir(fold)
-    for file in tqdm(file_list):
-        # print(fold+'/'+file)
-        readsac = read_sac(fold+'/'+file)
-        data = readsac.data
-        time = readsac.time
 
-        save = save_hdf5(f'{save_fold}/{file[:-4]}.hdf5', data, time)
+    if fold[-4:] == '1257':
+        for file in tqdm(file_list):
+            # print(fold+'/'+file)
+            readsac = read_sac(fold+'/'+file)
+            data = readsac.data
+            time = readsac.time
+
+            save = save_hdf5(f'{save_fold}/{file[:-4]}.hdf5', data, time)
+
+    else:
+        for file in tqdm(file_list):
+            readsac = read_sac(f'{fold}/{file}')
+            data = readsac.data
+            time = readsac.time
+
+            if len(data) > 119930:
+                data_split = []
+                time_split = []
+                for i in range(11993):
+                    num = i*10
+                    data_split.append(data[num])
+                    time_split.append(time[num])
+                data = data_split
+                time = time_split
+
+                save = save_hdf5(f'{save_fold}/{file[:-4]}.hdf5', data, time)
+            else:
+                continue
+# for fold, save_fold in zip(fold_list[1:], save_fold_list[1:]):
+#     file_list = os.listdir(fold)
+#     for file in tqdm(file_list):
+#         readsac = read_sac(f'{fold}/{file}')
+#         data = readsac.data
+#         time = readsac.time
+
+#         data_split = []
+#         time_split = []
+#         for i in range(11993):
+#             num = i*10
+#             data_split.append(data[num])
+#             time_split.append(time[num])
+#         data = data_split
+#         time = time_split
+#         # fig, ax = plt.subplots(figsize=(20, 5), dpi=500)
+#         # ax.plot(time, data)
+#         # fig.show()
+#         save = save_hdf5(f'{save_fold}/{file[:-4]}.hdf5', data, time)
+
+
 
 
 # f = h5py.File('/home/yuheng5454/MiDAS_test/data/hdf5/DAS/new_2023-08-13_01:43:10.32.hdf5', "r")
